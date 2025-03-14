@@ -203,6 +203,11 @@ class ConfigHelper {
           _defaultConfig[k],
           customConfig[k],
         );
+
+        // Remove the 'test/' prefix if it exists in the custom path for test_helpers_file_path
+        if (k == 'test_helpers_file_path' && customPath.startsWith('test/')) {
+          customPath = customPath.replaceFirst('test/', '');
+        }
         break;
       }
     }
