@@ -81,9 +81,16 @@ extension ListOfFieldConfigs on List<FieldConfig> {
 extension ExecutableElementDataExtension on ExecutableElement2? {
   String? get validatorPath =>
       this?.firstFragment.libraryFragment.source.uri.toString();
-  String? get validatorName => hasEnclosingElementName
-      ? '$enclosingElementName.${this?.name3}'
-      : this?.name3;
+  String? get validatorName {
+    final enclosingName = enclosingElementName;
+    // Only use dot notation if we have a non-empty enclosing element name
+    // This prevents generating dot-shorthand syntax like '.methodName'
+    if (enclosingName != null && enclosingName.isNotEmpty) {
+      return '$enclosingName.${this?.name3}';
+    }
+    return this?.name3;
+  }
+
   bool get hasEnclosingElementName => enclosingElementName != null;
   String? get enclosingElementName => this?.enclosingElement2?.name3;
 }
