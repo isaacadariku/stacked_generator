@@ -15,6 +15,15 @@ import 'dependency_config/factory_param_dependency.dart';
 import 'dependency_config/initializable_singleton_dependency.dart';
 import 'dependency_config/lazy_singleton.dart';
 
+/// Type checkers for dependency annotations
+final _factoryChecker = TypeChecker.typeNamed(Factory);
+final _singletonChecker = TypeChecker.typeNamed(Singleton);
+final _lazySingletonChecker = TypeChecker.typeNamed(LazySingleton);
+final _presolveChecker = TypeChecker.typeNamed(Presolve);
+final _initializableSingletonChecker =
+    TypeChecker.typeNamed(InitializableSingleton);
+final _factoryWithParamChecker = TypeChecker.typeNamed(FactoryWithParam);
+
 class DependencyConfigFactory {
   static DependencyConfig fromResolver({
     required DartObject dependencyConfig,
@@ -64,7 +73,7 @@ class DependencyConfigFactory {
     // NOTE: This can be used for actual dependency inject. We do service location instead.
     final constructor = classElement.unnamedConstructor2;
 
-    if (dependencyReader.instanceOf(const TypeChecker.fromRuntime(Factory))) {
+    if (dependencyReader.instanceOf(_factoryChecker)) {
       return FactoryDependency(
         instanceName: instanceName,
         import: import!,
@@ -73,8 +82,7 @@ class DependencyConfigFactory {
         abstractedImport: abstractedImport,
         environments: environments,
       );
-    } else if (dependencyReader
-        .instanceOf(const TypeChecker.fromRuntime(Singleton))) {
+    } else if (dependencyReader.instanceOf(_singletonChecker)) {
       final ConstantReader? resolveUsing =
           dependencyReader.peek('resolveUsing');
       final resolveObject = resolveUsing?.objectValue.toFunctionValue2();
@@ -87,8 +95,7 @@ class DependencyConfigFactory {
           abstractedImport: abstractedImport,
           environments: environments,
           resolveFunction: resolveObject?.displayName);
-    } else if (dependencyReader
-        .instanceOf(const TypeChecker.fromRuntime(LazySingleton))) {
+    } else if (dependencyReader.instanceOf(_lazySingletonChecker)) {
       final ConstantReader? resolveUsing =
           dependencyReader.peek('resolveUsing');
       final resolveObject = resolveUsing?.objectValue.toFunctionValue2();
@@ -103,7 +110,7 @@ class DependencyConfigFactory {
           resolveFunction: resolveObject?.displayName);
     } else if (dependencyReader
         // ignore: deprecated_member_use
-        .instanceOf(const TypeChecker.fromRuntime(Presolve))) {
+        .instanceOf(_presolveChecker)) {
       final ConstantReader? presolveUsing =
           dependencyReader.peek('presolveUsing');
       final presolveObject = presolveUsing?.objectValue.toFunctionValue2();
@@ -115,8 +122,7 @@ class DependencyConfigFactory {
           abstractedImport: abstractedImport,
           environments: environments,
           presolveFunction: presolveObject?.displayName);
-    } else if (dependencyReader
-        .instanceOf(const TypeChecker.fromRuntime(InitializableSingleton))) {
+    } else if (dependencyReader.instanceOf(_initializableSingletonChecker)) {
       return InitializableSingletonDependency(
         instanceName: instanceName,
         import: import!,
@@ -125,8 +131,7 @@ class DependencyConfigFactory {
         abstractedImport: abstractedImport,
         environments: environments,
       );
-    } else if (dependencyReader
-        .instanceOf(const TypeChecker.fromRuntime(FactoryWithParam))) {
+    } else if (dependencyReader.instanceOf(_factoryWithParamChecker)) {
       final Set<FactoryParameter> clazzParams = {};
       var params = constructor?.formalParameters;
       if (params?.isNotEmpty == true && constructor != null) {

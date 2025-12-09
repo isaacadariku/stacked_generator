@@ -9,6 +9,11 @@ import 'cupertino_route_config.dart';
 import 'custom_route_config.dart';
 import 'material_route_config.dart';
 
+/// Type checkers for route annotations
+final _cupertinoRouteChecker = TypeChecker.typeNamed(CupertinoRoute);
+final _adaptiveRouteChecker = TypeChecker.typeNamed(AdaptiveRoute);
+final _customRouteChecker = TypeChecker.typeNamed(CustomRoute);
+
 class RouteConfigFactory {
   final bool hasWrapper;
   final ResolvedType? returnType;
@@ -37,8 +42,7 @@ class RouteConfigFactory {
   });
 
   RouteConfig fromResolver(ConstantReader stackedRoute) {
-    if (stackedRoute
-        .instanceOf(const TypeChecker.fromRuntime(CupertinoRoute))) {
+    if (stackedRoute.instanceOf(_cupertinoRouteChecker)) {
       return CupertinoRouteConfig(
         className: className,
         classImport: classImport,
@@ -53,8 +57,7 @@ class RouteConfigFactory {
         cupertinoNavTitle: stackedRoute.peek('title')?.stringValue,
         parentClassName: parentClassName,
       );
-    } else if (stackedRoute
-        .instanceOf(const TypeChecker.fromRuntime(AdaptiveRoute))) {
+    } else if (stackedRoute.instanceOf(_adaptiveRouteChecker)) {
       return AdaptiveRouteConfig(
         className: className,
         classImport: classImport,
@@ -69,8 +72,7 @@ class RouteConfigFactory {
         cupertinoNavTitle: stackedRoute.peek('cupertinoPageTitle')?.stringValue,
         parentClassName: parentClassName,
       );
-    } else if (stackedRoute
-        .instanceOf(const TypeChecker.fromRuntime(CustomRoute))) {
+    } else if (stackedRoute.instanceOf(_customRouteChecker)) {
       final function = stackedRoute
           .peek('transitionsBuilder')
           ?.objectValue

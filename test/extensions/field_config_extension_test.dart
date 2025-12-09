@@ -7,8 +7,7 @@ import '../helpers/element2_mock_helper.dart';
 void main() {
   group('ExecutableElementDataExtension -', () {
     group('validatorName -', () {
-      test(
-          'should return only method name when enclosingElementName is null',
+      test('should return only method name when enclosingElementName is null',
           () {
         final mockElement = createMockExecutableElement2(
           methodName: 'validateEmail',
@@ -59,9 +58,7 @@ void main() {
         expect(result, isNull);
       });
 
-      test(
-          'should correctly identify when enclosing element name exists',
-          () {
+      test('should correctly identify when enclosing element name exists', () {
         final mockElementWithEnclosing = createMockExecutableElement2(
           methodName: 'validate',
           enclosingElementName: 'Helper',

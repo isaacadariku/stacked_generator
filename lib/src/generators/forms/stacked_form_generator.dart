@@ -10,6 +10,11 @@ import 'package:stacked_generator/src/generators/forms/form_view_config.dart';
 import 'package:stacked_generator/src/generators/forms/stacked_form_content_generator.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 
+/// Type checkers for form field annotations
+final _textFieldChecker = TypeChecker.typeNamed(FormTextField);
+final _dateFieldChecker = TypeChecker.typeNamed(FormDateField);
+final _dropdownFieldChecker = TypeChecker.typeNamed(FormDropdownField);
+
 class StackedFormGenerator extends GeneratorForAnnotation<FormView> {
   @override
   FutureOr<String> generateForAnnotatedElement(
@@ -57,12 +62,9 @@ FieldConfig _readFieldConfig({
 }) {
   var fieldReader = ConstantReader(fieldConfig);
 
-  bool isTextField =
-      fieldReader.instanceOf(const TypeChecker.fromRuntime(FormTextField));
-  bool isDateField =
-      fieldReader.instanceOf(const TypeChecker.fromRuntime(FormDateField));
-  bool isDropdownField =
-      fieldReader.instanceOf(const TypeChecker.fromRuntime(FormDropdownField));
+  bool isTextField = fieldReader.instanceOf(_textFieldChecker);
+  bool isDateField = fieldReader.instanceOf(_dateFieldChecker);
+  bool isDropdownField = fieldReader.instanceOf(_dropdownFieldChecker);
 
   if (isTextField) {
     return _readTextFieldConfig(

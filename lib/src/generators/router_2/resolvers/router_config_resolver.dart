@@ -11,6 +11,11 @@ import '../../router_common/models/router_config.dart';
 import '../../router_common/resolvers/type_resolver.dart';
 import 'route_config_resolver.dart';
 
+/// Type checkers for router annotations
+final _cupertinoRouterChecker = TypeChecker.typeNamed(CupertinoRouter);
+final _adaptiveRouterChecker = TypeChecker.typeNamed(AdaptiveRouter);
+final _customRouterChecker = TypeChecker.typeNamed(CustomRouter);
+
 /// Extracts and holds router configs
 
 class RouterConfigResolver {
@@ -31,13 +36,11 @@ class RouterConfigResolver {
     bool? customRouteBarrierDismissible;
     ResolvedType? transitionBuilder;
     ResolvedType? customRouteBuilder;
-    if (stackedApp.instanceOf(const TypeChecker.fromRuntime(CupertinoRouter))) {
+    if (stackedApp.instanceOf(_cupertinoRouterChecker)) {
       routeType = RouteType.cupertino;
-    } else if (stackedApp
-        .instanceOf(const TypeChecker.fromRuntime(AdaptiveRouter))) {
+    } else if (stackedApp.instanceOf(_adaptiveRouterChecker)) {
       routeType = RouteType.adaptive;
-    } else if (stackedApp
-        .instanceOf(const TypeChecker.fromRuntime(CustomRouter))) {
+    } else if (stackedApp.instanceOf(_customRouterChecker)) {
       routeType = RouteType.custom;
 
       durationInMilliseconds =
