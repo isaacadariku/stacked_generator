@@ -34,8 +34,6 @@ void main() {
   group('ConfigHelper -', () {
     const String customConfigFilePath =
         '/Users/filledstacks/Desktop/stacked.json';
-    const String xdgConfigFilePath =
-        '/Users/filledstacks/.config/stacked/stacked.json';
 
     final StackedConfig customConfig = StackedConfig.fromJson({
       "bottom_sheet_builder_file_path": "ui/setup/setup_bottom_sheet_ui.dart",
@@ -196,16 +194,22 @@ void main() {
         );
       });
 
-      test('when called and file is malformed should throw FormatException',
+      test('when called and file is malformed should handle FormatException gracefully',
           () async {
         final mockFileHelper = MockFileHelper();
         final helper = ConfigHelper(fileHelper: mockFileHelper);
 
-        expect(
-          () => helper.loadConfig(customConfigFilePath),
-          throwsA(predicate((e) => e is FormatException)),
-        );
-      }, skip: 'How can we trigger a FormatException from jsonDecode?');
+        // Mock malformed JSON that will cause jsonDecode to throw FormatException
+        when(
+          mockFileHelper.readFileAsString(filePath: customConfigFilePath)
+        ).thenAnswer((_) async => '{ invalid json structure without proper quotes }');
+
+        // The method should not throw, but should handle the exception gracefully
+        await helper.loadConfig(customConfigFilePath);
+        
+        // Config should not be loaded due to malformed JSON
+        expect(helper.hasCustomConfig, isFalse);
+      });
     });
 
     group('replaceCustomPaths -', () {
