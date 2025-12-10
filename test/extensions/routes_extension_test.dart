@@ -1,7 +1,9 @@
 import 'package:stacked_generator/src/generators/extensions/routes_extension.dart';
-import 'package:stacked_generator/src/generators/router_common/models/router_config.dart';
 import 'package:stacked_generator/src/generators/router/route_config/material_route_config.dart';
+import 'package:stacked_generator/src/generators/router_common/models/router_config.dart';
 import 'package:test/test.dart';
+
+import '../helpers/element2_mock_helper.dart';
 
 void main() {
   group('RoutesExtension -', () {
@@ -18,7 +20,7 @@ void main() {
 
         final config = RouterConfig(
           routerClassName: 'AppRouter',
-          routesClassName: 'AppRoutes', 
+          routesClassName: 'AppRoutes',
           routes: routes,
         );
 
@@ -64,7 +66,8 @@ void main() {
 
         expect(visitedConfigs.length, equals(2));
         expect(visitedConfigs[0].routerClassName, equals('AppRouter'));
-        expect(visitedConfigs[1].routerClassName, equals('UserRouter')); // Generated from route name
+        expect(visitedConfigs[1].routerClassName,
+            equals('UserRouter')); // Generated from route name
         expect(visitedConfigs[1].routesClassName, equals('UserRoutes'));
       });
 
@@ -101,8 +104,10 @@ void main() {
 
         expect(visitedConfigs.length, equals(2));
         expect(visitedConfigs[0].routerClassName, equals('MainRouter'));
-        expect(visitedConfigs[1].routerClassName, equals('UserDashboardRouter')); // From 'userDashboard' + 'Router'
-        expect(visitedConfigs[1].routesClassName, equals('UserDashboardRoutes'));
+        expect(visitedConfigs[1].routerClassName,
+            equals('UserDashboardRouter')); // From 'userDashboard' + 'Router'
+        expect(
+            visitedConfigs[1].routesClassName, equals('UserDashboardRoutes'));
       });
 
       test('should handle multiple levels of nesting', () {
@@ -201,8 +206,9 @@ void main() {
 
         expect(visitedConfigs.length, equals(3));
         expect(visitedConfigs[0].routerClassName, equals('AppRouter'));
-        
-        final childRouterNames = visitedConfigs.skip(1).map((c) => c.routerClassName).toSet();
+
+        final childRouterNames =
+            visitedConfigs.skip(1).map((c) => c.routerClassName).toSet();
         expect(childRouterNames, containsAll(['UserRouter', 'AdminRouter']));
       });
 
@@ -246,15 +252,19 @@ void main() {
 
         final routeInfos = <String>[];
         config.traverseRoutes((routerConfig) {
-          routeInfos.add('${routerConfig.routerClassName}:${routerConfig.routes.length}');
+          routeInfos.add(
+              '${routerConfig.routerClassName}:${routerConfig.routes.length}');
         });
 
         expect(routeInfos.length, equals(2));
-        expect(routeInfos[0], equals('RootRouter:1')); // Root has 1 parent route
-        expect(routeInfos[1], equals('ParentRouter:1')); // Parent router has 1 child route
+        expect(
+            routeInfos[0], equals('RootRouter:1')); // Root has 1 parent route
+        expect(routeInfos[1],
+            equals('ParentRouter:1')); // Parent router has 1 child route
       });
 
-      test('should capitalize route names correctly for router class names', () {
+      test('should capitalize route names correctly for router class names',
+          () {
         final routes = [
           MaterialRouteConfig(
             name: 'lowerCase',
@@ -284,13 +294,16 @@ void main() {
         });
 
         expect(visitedConfigs.length, equals(2));
-        expect(visitedConfigs[1].routerClassName, equals('LowerCaseRouter')); // Capitalized
+        expect(visitedConfigs[1].routerClassName,
+            equals('LowerCaseRouter')); // Capitalized
         expect(visitedConfigs[1].routesClassName, equals('LowerCaseRoutes'));
       });
     });
 
     group('Edge Cases -', () {
-      test('should handle routes with complex names containing numbers and symbols', () {
+      test(
+          'should handle routes with complex names containing numbers and symbols',
+          () {
         final routes = [
           MaterialRouteConfig(
             name: 'user123_admin',
@@ -320,7 +333,8 @@ void main() {
         });
 
         expect(visitedConfigs.length, equals(2));
-        expect(visitedConfigs[1].routerClassName, equals('User123_adminRouter'));
+        expect(
+            visitedConfigs[1].routerClassName, equals('User123_adminRouter'));
       });
 
       test('should maintain immutability of original config', () {
@@ -337,6 +351,7 @@ void main() {
           routerClassName: 'OriginalRouter',
           routesClassName: 'OriginalRoutes',
           routes: routes,
+          element: createMockClassElement2(),
         );
 
         final originalRouterClassName = originalConfig.routerClassName;

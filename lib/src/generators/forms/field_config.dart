@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_this
 
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 
 /// Described a single field to be generated.
 ///
@@ -55,12 +55,11 @@ class ExecutableElementData {
   });
 
   factory ExecutableElementData.fromExecutableElement(
-      ExecutableElement2 executableElement) {
+      ExecutableElement executableElement) {
     return ExecutableElementData(
       returnType: executableElement.firstFragment.element.returnType.toString(),
-      enclosingElementName: executableElement.enclosingElement2?.name3,
-      hasEnclosingElementName:
-          executableElement.enclosingElement2?.name3 != null,
+      enclosingElementName: executableElement.enclosingElement?.name,
+      hasEnclosingElementName: executableElement.enclosingElement?.name != null,
       validatorName: executableElement.validatorName,
       validatorPath: executableElement.validatorPath,
     );
@@ -78,7 +77,7 @@ extension ListOfFieldConfigs on List<FieldConfig> {
       this.whereType<DropdownFieldConfig>().map((t) => t).toList();
 }
 
-extension ExecutableElementDataExtension on ExecutableElement2? {
+extension ExecutableElementDataExtension on ExecutableElement? {
   String? get validatorPath =>
       this?.firstFragment.libraryFragment.source.uri.toString();
   String? get validatorName {
@@ -86,11 +85,11 @@ extension ExecutableElementDataExtension on ExecutableElement2? {
     // Only use dot notation if we have a non-empty enclosing element name
     // This prevents generating dot-shorthand syntax like '.methodName'
     if (enclosingName != null && enclosingName.isNotEmpty) {
-      return '$enclosingName.${this?.name3}';
+      return '$enclosingName.${this?.name}';
     }
-    return this?.name3;
+    return this?.name;
   }
 
   bool get hasEnclosingElementName => enclosingElementName != null;
-  String? get enclosingElementName => this?.enclosingElement2?.name3;
+  String? get enclosingElementName => this?.enclosingElement?.name;
 }

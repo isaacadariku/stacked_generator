@@ -76,13 +76,13 @@ class RouteConfigFactory {
       final function = stackedRoute
           .peek('transitionsBuilder')
           ?.objectValue
-          .toFunctionValue2();
+          .toFunctionValue();
 
       ResolvedType? customTransitionBuilder;
       if (function != null) {
         final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
         final functionName = function.isStatic
-            ? '${function.enclosingElement2?.displayName}.$displayName'
+            ? '${function.enclosingElement?.displayName}.$displayName'
             : displayName;
 
         customTransitionBuilder = ResolvedType(

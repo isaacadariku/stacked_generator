@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:stacked_generator/src/generators/router_common/models/route_parameter_config.dart';
@@ -24,7 +24,7 @@ class RouteParameterResolver {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    final paramName = parameterElement.name3?.replaceFirst("_", '');
+    final paramName = parameterElement.name?.replaceFirst("_", '');
     var pathParamAnnotation =
         _pathParamChecker.firstAnnotationOfExact(parameterElement);
     String? paramAlias;
@@ -54,7 +54,7 @@ class RouteParameterResolver {
 
     throwIf(
       pathParamAnnotation != null && queryParamAnnotation != null,
-      '${parameterElement.name3} can not be both a pathParam and a queryParam!',
+      '${parameterElement.name} can not be both a pathParam and a queryParam!',
       element: parameterElement,
     );
 
@@ -83,7 +83,7 @@ class RouteParameterResolver {
       type: _typeResolver.resolveType(type),
       params: type.formalParameters.map(resolve).toList(),
       element: paramElement,
-      name: paramElement.name3!,
+      name: paramElement.name!,
       defaultValueCode: paramElement.defaultValueCode,
       isRequired: paramElement.isRequiredNamed,
       isPositional: paramElement.isPositional,

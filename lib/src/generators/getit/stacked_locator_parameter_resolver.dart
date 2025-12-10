@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:stacked_generator/import_resolver.dart';
 import 'package:stacked_generator/utils.dart';
@@ -21,7 +21,7 @@ class DependencyParameterResolver {
     return FactoryParameter(
       isFactoryParam: isFactoryParam,
       type: toDisplayString(paramType),
-      name: parameterElement.name3?.replaceFirst("_", ''),
+      name: parameterElement.name?.replaceFirst("_", ''),
       isPositional: parameterElement.isPositional,
       isRequired: !parameterElement.isOptional,
       defaultValueCode: parameterElement.defaultValueCode,

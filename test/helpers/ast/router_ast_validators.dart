@@ -27,20 +27,25 @@ class LibraryBuilderAstValidator {
     }
 
     // Validate router configuration is generated
-    final routerConfig = AstHelper.findTopLevelVariableDeclaration(unit, 'router');
-    expect(routerConfig, isNotNull, reason: 'Should contain router configuration');
+    final routerConfig =
+        AstHelper.findTopLevelVariableDeclaration(unit, 'router');
+    expect(routerConfig, isNotNull,
+        reason: 'Should contain router configuration');
   }
 
   /// Validate part directive generation
-  static void validatePartDirective(String generatedCode, {required String expectedFileName}) {
-    expect(generatedCode, contains('part of'), reason: 'Should contain part of directive');
+  static void validatePartDirective(String generatedCode,
+      {required String expectedFileName}) {
+    expect(generatedCode, contains('part of'),
+        reason: 'Should contain part of directive');
   }
 }
 
 /// Router extension validation for Router 2.0
 class RouterExtensionAstValidator {
   /// Validate router extension generation
-  static void validateRouterExtension(String generatedCode, {required List<RouteConfig> expectedRoutes}) {
+  static void validateRouterExtension(String generatedCode,
+      {required List<RouteConfig> expectedRoutes}) {
     final unit = AstHelper.parseCode(generatedCode);
     expect(unit, isNotNull, reason: 'Generated code should be valid Dart');
 
@@ -447,7 +452,7 @@ class RouteClassGeneratorAstValidator {
         reason: 'Router class $routerClassName should exist');
 
     // Check inheritance
-    expect(routerClass!.extendsClause?.superclass.name2.lexeme,
+    expect(routerClass!.extendsClause?.superclass.name.lexeme,
         contains('RouterBase'),
         reason: '$routerClassName should extend RouterBase');
 
@@ -578,8 +583,9 @@ class ArgumentsClassAstValidator {
 
     // Validate each route that has parameters
     for (final route in expectedRoutes) {
-      final nonQueryParams = route.parameters.where((p) => !p.isQueryParam).toList();
-      
+      final nonQueryParams =
+          route.parameters.where((p) => !p.isQueryParam).toList();
+
       if (nonQueryParams.isNotEmpty) {
         final argumentsClassName = '${route.className}Arguments';
         _validateSingleArgumentClass(unit, argumentsClassName, nonQueryParams);
@@ -602,7 +608,8 @@ class ArgumentsClassAstValidator {
   // Private helper methods
 
   /// Validates imports for argument classes.
-  static void _validateArgumentClassImports(CompilationUnit unit, List<RouteConfig> routes) {
+  static void _validateArgumentClassImports(
+      CompilationUnit unit, List<RouteConfig> routes) {
     // Collect all imports needed for parameters
     final requiredImports = <String>{};
     for (final route in routes) {
@@ -622,11 +629,8 @@ class ArgumentsClassAstValidator {
   }
 
   /// Validates a single argument class structure.
-  static void _validateSingleArgumentClass(
-    CompilationUnit unit, 
-    String className, 
-    List<ParamConfig> expectedParameters
-  ) {
+  static void _validateSingleArgumentClass(CompilationUnit unit,
+      String className, List<ParamConfig> expectedParameters) {
     // Find the argument class
     final argumentClass = AstHelper.findClass(unit, className);
     expect(argumentClass, isNotNull,
@@ -634,22 +638,20 @@ class ArgumentsClassAstValidator {
 
     if (argumentClass != null) {
       // Validate constructor
-      _validateArgumentClassConstructor(argumentClass, className, expectedParameters);
-      
+      _validateArgumentClassConstructor(
+          argumentClass, className, expectedParameters);
+
       // Validate fields
       _validateArgumentClassFields(argumentClass, expectedParameters);
-      
+
       // Validate standard methods
       _validateArgumentClassMethods(argumentClass);
     }
   }
 
   /// Validates the constructor of an argument class.
-  static void _validateArgumentClassConstructor(
-    ClassDeclaration argumentClass, 
-    String className, 
-    List<ParamConfig> expectedParameters
-  ) {
+  static void _validateArgumentClassConstructor(ClassDeclaration argumentClass,
+      String className, List<ParamConfig> expectedParameters) {
     final constructor = AstHelper.findConstructor(argumentClass, className);
     expect(constructor, isNotNull,
         reason: '$className should have a constructor');
@@ -661,22 +663,22 @@ class ArgumentsClassAstValidator {
 
       // Validate constructor parameters match expected parameters
       final constructorParams = constructor.parameters.parameters;
-      
+
       // Count required and optional parameters
-      final requiredParams = expectedParameters.where((p) => p.isRequired).length;
-      final optionalParams = expectedParameters.where((p) => !p.isRequired).length;
-      
-      expect(constructorParams.length, 
-          equals(requiredParams + optionalParams),
-          reason: '$className constructor should have ${expectedParameters.length} parameters');
+      final requiredParams =
+          expectedParameters.where((p) => p.isRequired).length;
+      final optionalParams =
+          expectedParameters.where((p) => !p.isRequired).length;
+
+      expect(constructorParams.length, equals(requiredParams + optionalParams),
+          reason:
+              '$className constructor should have ${expectedParameters.length} parameters');
     }
   }
 
   /// Validates fields of an argument class.
   static void _validateArgumentClassFields(
-    ClassDeclaration argumentClass, 
-    List<ParamConfig> expectedParameters
-  ) {
+      ClassDeclaration argumentClass, List<ParamConfig> expectedParameters) {
     for (final param in expectedParameters) {
       final field = AstHelper.findField(argumentClass, param.name);
       expect(field, isNotNull,
@@ -764,10 +766,10 @@ class RoutesClassAstValidator {
     if (routesClass != null) {
       // Validate static const fields for each route
       _validateRouteConstants(routesClass, expectedRoutes);
-      
+
       // Validate 'all' field
       _validateAllField(routesClass, expectedRoutes);
-      
+
       // Validate dynamic path methods for parameterized routes
       _validateDynamicPathMethods(routesClass, expectedRoutes);
     }
@@ -776,11 +778,12 @@ class RoutesClassAstValidator {
   // Private helper methods
 
   /// Validates static const fields for each route.
-  static void _validateRouteConstants(ClassDeclaration routesClass, List<RouteConfig> expectedRoutes) {
+  static void _validateRouteConstants(
+      ClassDeclaration routesClass, List<RouteConfig> expectedRoutes) {
     for (final route in expectedRoutes) {
       final routeName = route.name ?? 'unknown';
       final field = AstHelper.findField(routesClass, routeName);
-      
+
       expect(field, isNotNull,
           reason: 'Routes class should have constant for $routeName');
 
@@ -788,11 +791,11 @@ class RoutesClassAstValidator {
         // Should be static
         expect(field.isStatic, isTrue,
             reason: 'Route constant $routeName should be static');
-        
+
         // Should be const or final (check for const or final keywords)
-        final isConstOrFinal = AstHelper.isFieldFinal(field) || 
-                             field.fields.variables.first.toString().contains('const') ||
-                             field.fields.keyword?.lexeme == 'const';
+        final isConstOrFinal = AstHelper.isFieldFinal(field) ||
+            field.fields.variables.first.toString().contains('const') ||
+            field.fields.keyword?.lexeme == 'const';
         expect(isConstOrFinal, isTrue,
             reason: 'Route constant $routeName should be const or final');
 
@@ -800,27 +803,28 @@ class RoutesClassAstValidator {
         final fieldType = AstHelper.getFieldType(field);
         if (fieldType != null) {
           expect(fieldType, anyOf(contains('String'), equals('')),
-              reason: 'Route constant $routeName should be String type when explicitly typed');
+              reason:
+                  'Route constant $routeName should be String type when explicitly typed');
         }
       }
     }
   }
 
   /// Validates the 'all' field that contains all route names.
-  static void _validateAllField(ClassDeclaration routesClass, List<RouteConfig> expectedRoutes) {
+  static void _validateAllField(
+      ClassDeclaration routesClass, List<RouteConfig> expectedRoutes) {
     final allField = AstHelper.findField(routesClass, 'all');
     expect(allField, isNotNull,
         reason: 'Routes class should have an "all" field');
 
     if (allField != null) {
       // Should be static
-      expect(allField.isStatic, isTrue,
-          reason: '"all" field should be static');
-      
+      expect(allField.isStatic, isTrue, reason: '"all" field should be static');
+
       // Should be const or final (check for const or final keywords)
-      final isConstOrFinal = AstHelper.isFieldFinal(allField) || 
-                           allField.fields.variables.first.toString().contains('const') ||
-                           allField.fields.keyword?.lexeme == 'const';
+      final isConstOrFinal = AstHelper.isFieldFinal(allField) ||
+          allField.fields.variables.first.toString().contains('const') ||
+          allField.fields.keyword?.lexeme == 'const';
       expect(isConstOrFinal, isTrue,
           reason: '"all" field should be const or final');
 
@@ -828,38 +832,42 @@ class RoutesClassAstValidator {
       final fieldType = AstHelper.getFieldType(allField);
       if (fieldType != null) {
         expect(fieldType, anyOf(contains('Set'), contains('String')),
-            reason: '"all" field should be Set<String> type when explicitly typed');
+            reason:
+                '"all" field should be Set<String> type when explicitly typed');
       }
     }
   }
 
   /// Validates dynamic path methods for routes with path parameters.
-  static void _validateDynamicPathMethods(ClassDeclaration routesClass, List<RouteConfig> expectedRoutes) {
+  static void _validateDynamicPathMethods(
+      ClassDeclaration routesClass, List<RouteConfig> expectedRoutes) {
     for (final route in expectedRoutes) {
       // Check if route has path parameters (contains :param in pathName)
       final pathName = route.pathName;
       if (pathName.contains(':')) {
         final routeName = route.name ?? 'unknown';
         final methodName = routeName;
-        
+
         final method = AstHelper.findMethod(routesClass, methodName);
         expect(method, isNotNull,
-            reason: 'Routes class should have dynamic path method for $routeName');
+            reason:
+                'Routes class should have dynamic path method for $routeName');
 
         if (method != null) {
           // Should be static
           expect(method.isStatic, isTrue,
               reason: 'Dynamic path method $methodName should be static');
-          
+
           // Should return String
           final returnType = AstHelper.getMethodReturnType(method);
           expect(returnType, contains('String'),
               reason: 'Dynamic path method $methodName should return String');
-          
+
           // Should have parameters for path variables
           final parameters = method.parameters?.parameters ?? [];
           expect(parameters, isNotEmpty,
-              reason: 'Dynamic path method $methodName should have parameters for path variables');
+              reason:
+                  'Dynamic path method $methodName should have parameters for path variables');
         }
       }
     }
@@ -909,7 +917,8 @@ class NavigationExtensionAstValidator {
   // Private helper methods
 
   /// Finds an extension declaration by name.
-  static ExtensionDeclaration? _findExtension(CompilationUnit unit, String name) {
+  static ExtensionDeclaration? _findExtension(
+      CompilationUnit unit, String name) {
     for (final declaration in unit.declarations) {
       if (declaration is ExtensionDeclaration &&
           declaration.name?.lexeme == name) {
@@ -927,10 +936,11 @@ class NavigationExtensionAstValidator {
     for (final route in expectedRoutes) {
       final routeName = route.name ?? 'unknown';
       final methodName = 'navigateTo${_capitalize(routeName)}';
-      
+
       final method = _findMethodInExtension(extension, methodName);
       expect(method, isNotNull,
-          reason: 'Extension should have method $methodName for route $routeName');
+          reason:
+              'Extension should have method $methodName for route $routeName');
 
       if (method != null) {
         // Validate method parameters match route parameters
@@ -967,7 +977,7 @@ class NavigationExtensionAstValidator {
       final hasParameterHandling = parameters.isNotEmpty ||
           methodSignature.contains('arguments') ||
           methodSignature.contains('Arguments');
-      
+
       expect(hasParameterHandling, isTrue,
           reason: 'Method $methodName should handle route parameters somehow');
     }

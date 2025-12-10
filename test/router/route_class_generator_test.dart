@@ -10,6 +10,7 @@ import 'package:stacked_generator/src/generators/router_common/models/router_con
 import 'package:test/test.dart';
 
 import '../helpers/ast/router_ast_validators.dart';
+import '../helpers/element2_mock_helper.dart';
 
 void main() {
   group('RouteClassGeneratorTest -', () {
@@ -23,12 +24,13 @@ void main() {
         routerClassName: 'RouterTestClassName',
         generateNavigationHelper: true,
         routes: routes,
+        element: createMockClassElement2(),
       ));
       final result = routerBaseGenerator.generate();
 
       // ignore: avoid_print
       if (verbose) print(result);
-      
+
       if (customValidation != null) {
         customValidation(result);
       } else {
@@ -52,7 +54,8 @@ void main() {
           generateRouteAndExpectStructure(
             routes,
             customValidation: (result) {
-              expect(result, isEmpty, reason: 'Should generate empty result for no routes');
+              expect(result, isEmpty,
+                  reason: 'Should generate empty result for no routes');
             },
           );
         });
@@ -66,7 +69,7 @@ void main() {
               classImport: 'test.dart',
             )
           ];
-          
+
           generateRouteAndExpectStructure(routes);
         });
 

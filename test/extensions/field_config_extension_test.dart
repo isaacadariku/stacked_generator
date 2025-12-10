@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:stacked_generator/src/generators/forms/field_config.dart';
 import 'package:test/test.dart';
 
@@ -51,7 +51,7 @@ void main() {
       });
 
       test('should handle null executable element', () {
-        const ExecutableElement2? mockElement = null;
+        const ExecutableElement? mockElement = null;
 
         final result = mockElement.validatorName;
 
@@ -86,7 +86,7 @@ void main() {
       });
 
       test('should handle null executable element', () {
-        const ExecutableElement2? mockElement = null;
+        const ExecutableElement? mockElement = null;
 
         final result = mockElement.validatorPath;
 
